@@ -6,99 +6,99 @@ This project marked a really big step in this class. The point of this class was
 
 ## Code
 ### p3-module.js
-function validDenomination(coin) {
-    //responds true if input matches an item in the array
-    console.log([1,5,10,25,50,100].indexOf(coin) !== -1);
-}
+function validDenomination(coin) {<br>
+    //responds true if input matches an item in the array<br>
+    console.log([1,5,10,25,50,100].indexOf(coin) !== -1);<br>
+}<br>
 
-//coin objects have 2 properties - denom and count
-function valueFromCoinObject(obj) {
-    const { denom = 0, count = 0 } = obj;
-    return denom*count;
-}
+//coin objects have 2 properties - denom and count<br>
+function valueFromCoinObject(obj) {<br>
+    const { denom = 0, count = 0 } = obj;<br>
+    return denom*count;<br>
+}<br>
 
-//gets valueFromCoinObject as it iterates through the array, adds to and returns "total"
-function valueFromArray(arr) {
-    getSum = (total, obj) => {
-        let num = valueFromCoinObject(obj)
-        return total + num;
-    }
-    return arr.reduce(getSum, 0);
-}
+//gets valueFromCoinObject as it iterates through the array, adds to and returns "total"<br>
+function valueFromArray(arr) {<br>
+    getSum = (total, obj) => {<br>
+        let num = valueFromCoinObject(obj)<br>
+        return total + num;<br>
+    }<br>
+    return arr.reduce(getSum, 0);<br>
+}<br>
 
-function coinCount(...coinage) {
-    return valueFromArray(coinage)
-}
+function coinCount(...coinage) {<br>
+    return valueFromArray(coinage)<br>
+}<br>
 
-module.exports = {
-    coinCount
-}
+module.exports = {<br>
+    coinCount<br>
+}<br>
 
 ### p3-server.js
-const fs = require("fs");
-const fastify = require("fastify") ();
-const {coinCount} = require('./p3-module.js');
+const fs = require("fs");<br>
+const fastify = require("fastify") ();<br>
+const {coinCount} = require('./p3-module.js');<br>
 
-fastify.get("/", (request, reply) => {
-    fs.readFile(`${__dirname}/index.html`, (err, data) => {
-        if (err) {
-            console.log(err);
-            reply
-            .code(500)
-            .header("Content-Type", "application/json; charset=utf-8")
-            .send("Error processing request")
-        } else {
-            reply
-            .code(200)
-            .header("Content-Type", "application/json; charset=utf-8")
-            .send(data)
-        }
-    });
-});
+fastify.get("/", (request, reply) => {<br>
+    fs.readFile(`${__dirname}/index.html`, (err, data) => {<br>
+        if (err) {<br>
+            console.log(err);<br>
+            reply<br>
+            .code(500)<br>
+            .header("Content-Type", "application/json; charset=utf-8")<br>
+            .send("Error processing request")<br>
+        } else {<br>
+            reply<br>
+            .code(200)<br>
+            .header("Content-Type", "application/json; charset=utf-8")<br>
+            .send(data)<br>
+        }<br>
+    });<br>
+});<br>
 
-fastify.get("/coin", (request, reply) => {
-    console.log(request.query);
-    const { denom = 0, count = 0 } = request.query;
-    const parsedDenom = parseInt(denom)
-    const parsedCount = parseInt(count)
-    const coinValue = coinCount(request.query)
-    reply
-    .code(200)
-    .header("Content-Type", "text/html; charset=utf-8")
-    .send(`<h2>Value of ${count} of ${denom} is ${coinValue}</h2><br /><a href="/">Home</a>`);
-});
+fastify.get("/coin", (request, reply) => {<br>
+    console.log(request.query);<br>
+    const { denom = 0, count = 0 } = request.query;<br>
+    const parsedDenom = parseInt(denom)<br>
+    const parsedCount = parseInt(count)<br>
+    const coinValue = coinCount(request.query)<br>
+    reply<br>
+    .code(200)<br>
+    .header("Content-Type", "text/html; charset=utf-8")<br>
+    .send(`<h2>Value of ${count} of ${denom} is ${coinValue}</h2><br /><a href="/">Home</a>`);<br>
+});<br>
 
-fastify.get("/coins", (request, reply) => {
-    console.log(request.query);
-    const { option } = request.query;
-    switch(option) {
-        case '1':
-            coinValue = coinCount({ denom: 5, count: 3 }, { denom: 10, count: 2 });
-            break;
-        case '2':
-            //put this test array because I think this is what the instructions were asking for? unclear
-            const coins = [{denom: 25, count: 2},{denom: 1, count: 7}];
-            coinValue = coinCount(...coins)
-            break;
-        default:
-            coinValue = 0
-    }
-    reply
-    .code(200)
-    .header("Content-Type", "text/html; charset=utf-8")
-    .send(`<h2>Option ${option} value is ${coinValue}</h2><br /><a href="/">Home</a>`);
-});
+fastify.get("/coins", (request, reply) => {<br>
+    console.log(request.query);<br>
+    const { option } = request.query;<br>
+    switch(option) {<br>
+        case '1':<br>
+            coinValue = coinCount({ denom: 5, count: 3 }, { denom: 10, count: 2 });<br>
+            break;<br>
+        case '2':<br>
+            //put this test array because I think this is what the instructions were asking for? unclear<br>
+            const coins = [{denom: 25, count: 2},{denom: 1, count: 7}];<br>
+            coinValue = coinCount(...coins)<br>
+            break;<br>
+        default:<br>
+            coinValue = 0<br>
+    }<br>
+    reply<br>
+    .code(200)<br>
+    .header("Content-Type", "text/html; charset=utf-8")<br>
+    .send(`<h2>Option ${option} value is ${coinValue}</h2><br /><a href="/">Home</a>`);<br>
+});<br>
 
-const listenIP = "localhost";
-const listenPort = 8080;
-fastify.listen(listenPort, listenIP, (err, address) => {
-  if (err) {
-    console.log(err);
-    process.exit(1);
-  }
-  console.log(`Server listening on ${address}`);
-});
+const listenIP = "localhost";<br>
+const listenPort = 8080;<br>
+fastify.listen(listenPort, listenIP, (err, address) => {<br>
+  if (err) {<br>
+    console.log(err);<br>
+    process.exit(1);<br>
+  }<br>
+  console.log(`Server listening on ${address}`);<br>
+});<br>
 
-//http://localhost:8080
+//http://localhost:8080<br>
 
 ### [Home Page](https://slynsky.github.io)
